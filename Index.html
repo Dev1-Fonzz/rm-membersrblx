@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RM-MEMBERSRBLX — SPIMF</title>
+  <meta name="description" content="Sistem Pengurusan Identiti Membership FareezOnzz (SPIMF) — GitHub Pages ready">
+  <style>
+    :root{
+      --green:#2ea44f; --orange:#ff7a00; --yellow:#ffd54f; --black:#111; --white:#ffffff; --blue:#1e90ff; --red:#e03131;
+      --muted:#6b7280; --card:#ffffff;
+    }
+    *{box-sizing:border-box}
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial; margin:0; background:linear-gradient(180deg,#f7fff8 0%,#fff 100%); color:var(--black)}
+    header{background:linear-gradient(90deg,var(--green),#67c9a3); color:var(--white); padding:18px 20px; display:flex; align-items:center; gap:12px}
+    .brand{font-weight:800;font-size:18px}
+    main{max-width:1100px;margin:20px auto;padding:18px}
+    .card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 8px 28px rgba(16,24,40,0.06);margin-bottom:16px}
+    label{display:block;margin-bottom:8px;font-weight:600}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    input, select, button, textarea{padding:10px;border-radius:8px;border:1px solid #e6e6e6;font-size:14px}
+    button{cursor:pointer}
+    .btn-yellow{background:var(--yellow);color:var(--black);border:none;font-weight:700;padding:10px 14px;border-radius:8px}
+    .btn-green{background:var(--green);color:var(--white);border:none;font-weight:700;padding:10px 14px;border-radius:8px}
+    .btn-orange{background:var(--orange);color:var(--white);border:none;font-weight:700;padding:10px 14px;border-radius:8px}
+    .btn-link{background:transparent;border:1px dashed #ddd;padding:8px;border-radius:8px}
+    .small{font-size:13px;color:var(--muted)}
+    .member-card{display:flex;gap:16px;align-items:flex-start}
+    .member-avatar{width:96px;height:96px;border-radius:10px;background:linear-gradient(135deg,var(--blue),#89b4ff);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:28px}
+    .kv{display:flex;flex-direction:column;gap:6px}
+    table{width:100%;border-collapse:collapse;margin-top:8px}
+    th,td{padding:8px;border:1px solid #eee;text-align:left}
+    thead tr{background:var(--yellow);color:var(--black);font-weight:700}
+    .controls{display:flex;gap:8px;flex-wrap:wrap}
+    .footer{padding:14px;text-align:center;color:#333;font-size:13px;margin-top:8px}
+    .hidden{display:none}
+    .used{opacity:.5}
+    .actions button{margin-right:6px}
+    .links-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+    .links-grid a{display:block;padding:10px;border-radius:10px;text-align:center;text-decoration:none;color:#fff;font-weight:700}
+    .l-blog{background:linear-gradient(90deg,var(--green),#3bb27e)}
+    .l-analisa{background:var(--orange)}
+    .l-daftar{background:var(--green)}
+    .l-class{background:var(--yellow); color:var(--black)}
+    @media(max-width:900px){.links-grid{grid-template-columns:repeat(2,1fr)} .member-card{flex-direction:column;align-items:flex-start}}
+    /* generate table style */
+    .gen-table thead tr{background:var(--yellow);color:var(--black);font-weight:700}
+    .gen-actions button{background:var(--green);color:#fff;border:none;padding:6px 8px;border-radius:6px;margin-right:6px;cursor:pointer}
+    .copy-btn{background:#2d9cdb}
+    .edit-btn{background:#6f42c1}
+    .regen-btn{background:#ff7a00}
+    .used-btn{background:#6c757d}
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="brand">💡 SPIMF — RM-MEMBERSRBLX</div>
+      <div class="small">Sistem Pengurusan Identiti Membership FareezOnzz (GitHub Pages-ready)</div>
+    </div>
+  </header>
+
+  <main>
+    <section class="card" id="loginCard">
+      <h3>💡 SECURITY KONFIRMASI SPIMF</h3>
+      <p class="small">Pilih kaedah log masuk dan masukkan kod anda. Sistem akan periksa format rahsia (tanpa mendedahkan pola kepada pengguna).</p>
+
+      <div class="row" style="align-items:center">
+        <select id="loginMethod" aria-label="Pilih kaedah login">
+          <option value="kode">🔎 Kode User</option>
+          <option value="idcard">🔎 IDCard Registration</option>
+          <option value="admin">🔒 Admin</option>
+        </select>
+
+        <input id="loginInput" placeholder="Masukkan kod anda" style="flex:1" aria-label="Masukkan kod" />
+
+        <button id="btnLogin" class="btn-yellow">Login Masuk</button>
+        <div id="loginMsg" class="small" style="align-self:center"></div>
+      </div>
+
+      <div style="margin-top:10px" class="small">Nota: Jika anda buka fail ini terus dari komputer (file://), klik butang <b>Muat Data CSV Sekarang</b> dahulu. Saya syorkan upload ke GitHub Pages supaya fetch CSV berfungsi tanpa sekatan.</div>
+    </section>
+
+    <section class="card hidden" id="memberArea">
+      <h3>Kad Maklumat Ahli</h3>
+      <div id="memberCard"></div>
+
+      <div class="links-grid" style="margin-top:12px">
+        <a class="l-blog" href="https://rm-membersrblx.blogspot.com/?m=1" target="_blank">SPIMF BLOG</a>
+        <a class="l-analisa" href="https://rm-membersrblx.blogspot.com/p/sistem-analisis-members-fareezonzz.html?m=1" target="_blank">SYSTEM ANALISA</a>
+        <a class="l-daftar" href="https://rm-membersrblx.blogspot.com/p/sign-in-as-member-pay-5-robux.html?m=1" target="_blank">👤 DAFTAR AHLI</a>
+        <a class="l-class" href="https://classroom.google.com/c/ODA1ODY4OTI3MjE3?cjc=fpaennh6" target="_blank">📲 Sertai Google Classroom</a>
+      </div>
+    </section>
+
+    <section class="card" id="adminCard" style="display:none">
+      <h3>Admin — Panel Pengurusan</h3>
+      <div class="small">Panel ini hanya muncul selepas admin berjaya login.</div>
+
+      <div style="margin-top:12px">
+        <label>Jumlah untuk jana (max 10000)</label>
+        <input id="genCount" type="number" min="1" max="10000" value="10" style="width:140px" />
+        <button id="btnGenerate" class="btn-green">Jana KOD (Generate)</button>
+        <button id="btnExport" class="btn-link">Eksport CSV</button>
+      </div>
+
+      <div style="margin-top:12px; overflow:auto">
+        <table class="gen-table" id="genTable">
+          <thead>
+            <tr><th>KODE USER</th><th>ID CARD REGISTRATION</th><th>AKUN GMAIL</th><th>PASSWORD GMAIL</th><th>ACTION</th></tr>
+          </thead>
+          <tbody id="genBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>Semakan / Debug</h3>
+      <div class="row">
+        <input id="searchInput" placeholder="Cari ikut kode user / idcard / email" style="flex:1" />
+        <button id="btnSearch" class="btn-link">Cari</button>
+        <button id="btnLoadCSV" class="btn-link">Muat Data CSV Sekarang</button>
+      </div>
+      <div id="searchResults" style="margin-top:12px"></div>
+    </section>
+
+    <div class="footer card">
+      <div>📲 Bantuan Lanjut: <a href="mailto:pfareezonzz01@gmail.com">pfareezonzz01@gmail.com</a> | <a href="mailto:developerfareezonzz@gmail.com">developerfareezonzz@gmail.com</a></div>
+      <div style="margin-top:8px">SPIMF Sentiasa Maju — Sistem Pengurusan Identiti Membership FareezOnzz Sejak 2023</div>
+    </div>
+  </main>
+
+  <script>
+    // --- CONFIG ---
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS3v6wbwyMY9INoHQ8YV_Ag8LPu0dmBuPWu2dtvaZ_lz5IsDFeIG1-km6W7bri6FVX2L54G8VG0vPFL/pub?output=csv';
+    const ADMIN_PASSWORD = 'RRMM2025'; // kept client-side (required for admin-only UI). Don't reveal externally.
+    const MAX_GENERATE = 10000;
+
+    // --- STATE ---
+    let csvHeaders = [];
+    let csvRows = []; // array of arrays
+    let generated = JSON.parse(localStorage.getItem('spimf_generated')||'[]');
+
+    // --- UTILITIES ---
+    function parseCSV(text){
+      // RFC4180-like simple parser supporting quoted fields with commas and newlines.
+      const rows = [];
+      let cur = '';
+      let row = [];
+      let inQuotes = false;
+      for(let i=0;i<text.length;i++){
+        const ch = text[i];
+        if(ch === '\"'){
+          // lookahead for escaped quote
+          if(inQuotes && text[i+1] === '\"'){ cur += '\"'; i++; continue; }
+          inQuotes = !inQuotes; continue;
+        }
+        if(ch === ',' && !inQuotes){ row.push(cur); cur=''; continue; }
+        if((ch === '\n' || ch === '\r') && !inQuotes){
+          // handle CRLF
+          if(ch === '\r' && text[i+1] === '\n'){ i++; }
+          row.push(cur); cur='';
+          // ignore empty last row
+          if(row.length === 1 && row[0] === ''){ row = []; continue; }
+          rows.push(row);
+          row = [];
+          continue;
+        }
+        cur += ch;
+      }
+      // push last
+      if(cur !== '' || row.length>0){ row.push(cur); rows.push(row); }
+      // trim trailing empty rows
+      while(rows.length && rows[rows.length-1].length === 1 && rows[rows.length-1][0] === '') rows.pop();
+      return rows;
+    }
+
+    function normalizeHeaderName(s){
+      return (s||'').toString().toLowerCase().replace(/\s+/g,'').replace(/[^a-z0-9]/g,'');
+    }
+
+    function findColumnIndexByKeywords(keywords){
+      // keywords: array of strings, return first header index whose normalized name contains any keyword
+      for(let i=0;i<csvHeaders.length;i++){
+        const n = normalizeHeaderName(csvHeaders[i]);
+        for(const kw of keywords){
+          if(n.includes(kw)) return i;
+        }
+      }
+      return -1;
+    }
+
+    function showMsg(msg, isError=false){
+      const el = document.getElementById('loginMsg');
+      el.textContent = msg;
+      el.style.color = isError ? 'var(--red)' : '';
+      setTimeout(()=>{ if(el.textContent===msg) el.textContent=''; }, 5000);
+    }
+
+    // --- CSV LOAD ---
+    async function loadCSV(){
+      showMsg('Memuat data CSV...');
+      try{
+        const res = await fetch(CSV_URL);
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        const text = await res.text();
+        const rows = parseCSV(text);
+        if(rows.length === 0) throw new Error('CSV kosong');
+        csvHeaders = rows[0].map(h => h || '');
+        csvRows = rows.slice(1);
+        console.log('CSV headers:', csvHeaders);
+        showMsg('Data CSV dimuatkan.');
+        renderCSVPreview();
+        return true;
+      }catch(err){
+        console.error('Gagal muat CSV', err);
+        showMsg('Gagal muat CSV: '+err.message, true);
+        return false;
+      }
+    }
+
+    function renderCSVPreview(){
+      const el = document.getElementById('searchResults');
+      el.innerHTML = `<div class="small">Menunjukkan ${csvRows.length} rekod. Header: ${csvHeaders.join(', ')}</div>`;
+      if(csvRows.length>0){
+        const first = csvRows[0];
+        const tbl = document.createElement('table');
+        const thead = document.createElement('tr');
+        csvHeaders.forEach(h=>{ const th=document.createElement('th'); th.textContent=h; thead.appendChild(th); });
+        tbl.appendChild(thead);
+        const tr = document.createElement('tr');
+        csvHeaders.forEach((h,idx)=>{ const td = document.createElement('td'); td.textContent = first[idx] || ''; tr.appendChild(td); });
+        tbl.appendChild(tr);
+        el.appendChild(tbl);
+      }
+    }
+
+    // --- LOGIN HANDLING ---
+    function isValidKodeFormat(s){
+      return /^[A-Za-z]{3}\d{5}R$/.test(s);
+    }
+    function isValidIDCardFormat(s){
+      return /^[A-Za-z]{3}\d{5}RRMM\d{4}$/.test(s);
+    }
+
+    document.getElementById('btnLoadCSV').addEventListener('click', ()=>{
+      loadCSV();
+    });
+
+    document.getElementById('btnLogin').addEventListener('click', async ()=>{
+      const method = document.getElementById('loginMethod').value;
+      const raw = document.getElementById('loginInput').value.trim();
+      if(!raw){ showMsg('Sila masukkan kod.', true); return; }
+
+      if(csvRows.length === 0){
+        // attempt auto-load once
+        const ok = await loadCSV();
+        if(!ok){ showMsg('Sila upload ke GitHub Pages atau muat CSV dahulu.', true); return; }
+      }
+
+      if(method === 'admin'){
+        if(raw === ADMIN_PASSWORD){
+          // show admin panel
+          document.getElementById('adminCard').style.display = 'block';
+          showMsg('Admin berjaya log masuk.');
+          renderGenerated();
+        } else {
+          showMsg('Kata laluan admin salah.', true);
+        }
+        return;
+      }
+
+      // decide which column to search
+      const kodeIdx = findColumnIndexByKeywords(['kode','code','user']); // for kode user
+      const idIdx = findColumnIndexByKeywords(['idcard','id','idcardregistration','id_card','id_registration']);
+      console.log('detected columns kodeIdx,idIdx', kodeIdx, idIdx);
+
+      let colIdx = (method === 'kode') ? kodeIdx : idIdx;
+      if(colIdx === -1){
+        showMsg('Gagal detect lajur yang sesuai dalam CSV. Semak header.', true);
+        return;
+      }
+
+      // validate format before searching (security logic)
+      if(method === 'kode' && !isValidKodeFormat(raw)){ showMsg('Format Kode User tidak sah.', true); return; }
+      if(method === 'idcard' && !isValidIDCardFormat(raw)){ showMsg('Format IDCard tidak sah.', true); return; }
+
+      // search exact match in csvRows
+      let foundRow = null;
+      for(const r of csvRows){
+        const cell = (r[colIdx]||'').toString().trim();
+        if(cell === raw){ foundRow = r; break; }
+      }
+
+      if(foundRow){
+        showMember(foundRow);
+        showMsg('Login berjaya.');
+      } else {
+        showMsg('Tiada rekod ditemui untuk kod ini.', true);
+      }
+    });
+
+    function showMember(row){
+      const area = document.getElementById('memberArea');
+      const card = document.getElementById('memberCard');
+      area.classList.remove('hidden');
+      card.innerHTML = '';
+      const avatar = document.createElement('div'); avatar.className='member-avatar'; avatar.textContent = (row[0]||'').toString().slice(0,2).toUpperCase();
+      const kv = document.createElement('div'); kv.className='kv';
+      csvHeaders.forEach((h,idx)=>{
+        const d = document.createElement('div');
+        d.innerHTML = `<strong>${h}</strong> : ${row[idx]||''}`;
+        kv.appendChild(d);
+      });
+      const cont = document.createElement('div'); cont.className='member-card'; cont.appendChild(avatar); cont.appendChild(kv);
+      card.appendChild(cont);
+    }
+
+    // --- SEARCH FUNCTION ---
+    document.getElementById('btnSearch').addEventListener('click', ()=>{
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      if(!q){ alert('Masukkan nilai carian'); return; }
+      if(csvRows.length === 0){ alert('Sila muat data CSV dahulu'); return; }
+      let found = null;
+      for(const r of csvRows){
+        for(const c of r){
+          if((c||'').toString().toLowerCase() === q){ found = r; break; }
+        }
+        if(found) break;
+      }
+      const out = document.getElementById('searchResults');
+      out.innerHTML = '';
+      if(!found){ out.textContent = 'Tiada rekod ditemui.'; return; }
+      const tbl = document.createElement('table');
+      const thead = document.createElement('tr');
+      csvHeaders.forEach(h=>{ const th=document.createElement('th'); th.textContent=h; thead.appendChild(th); });
+      tbl.appendChild(thead);
+      const tr = document.createElement('tr');
+      csvHeaders.forEach((h,idx)=>{ const td=document.createElement('td'); td.textContent = found[idx]||''; tr.appendChild(td); });
+      tbl.appendChild(tr);
+      out.appendChild(tbl);
+    });
+
+    // --- GENERATOR ---
+    function randLetters(n){ const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ'; let s=''; for(let i=0;i<n;i++) s+=chars[Math.floor(Math.random()*chars.length)]; return s; }
+    function randDigits(n){ let s=''; for(let i=0;i<n;i++) s+=Math.floor(Math.random()*10); return s; }
+    function genKodeUser(){ return randLetters(3)+randDigits(5)+'R'; }
+    function genIDCard(){ return randLetters(3)+randDigits(5)+'RRMM'+randDigits(4); }
+
+    document.getElementById('btnGenerate').addEventListener('click', ()=>{
+      const n = Math.max(1, Math.min(MAX_GENERATE, parseInt(document.getElementById('genCount').value || '10')));
+      for(let i=0;i<n;i++){
+        const kode = genKodeUser();
+        const id = genIDCard();
+        const email = id.toLowerCase() + '@gmail.com';
+        const pwd = kode;
+        generated.push({kode,id,email,pwd,used:false});
+      }
+      saveGenerated();
+      renderGenerated();
+    });
+
+    function renderGenerated(){
+      const tbody = document.getElementById('genBody');
+      tbody.innerHTML = '';
+      generated.forEach((g,idx)=>{
+        const tr = document.createElement('tr');
+        tr.className = g.used ? 'used' : '';
+        const tdAction = document.createElement('td');
+        tdAction.style.whiteSpace = 'nowrap';
+        const btnCopy = document.createElement('button'); btnCopy.textContent='🖨️COPY'; btnCopy.className='gen-actions copy-btn'; btnCopy.onclick = ()=>{ navigator.clipboard.writeText(`${g.kode},${g.id},${g.email},${g.pwd}`); alert('Disalin ke papan klip'); };
+        const btnEdit = document.createElement('button'); btnEdit.textContent='💻EDIT'; btnEdit.className='gen-actions edit-btn'; btnEdit.onclick = ()=>{ const nk = prompt('Edit Kode User', g.kode); if(nk){ g.kode = nk; g.pwd = nk; saveGenerated(); renderGenerated(); } };
+        const btnRegen = document.createElement('button'); btnRegen.textContent='📠REGENERATE'; btnRegen.className='gen-actions regen-btn'; btnRegen.onclick = ()=>{ g.kode = genKodeUser(); g.id = genIDCard(); g.email = g.id.toLowerCase() + '@gmail.com'; g.pwd = g.kode; saveGenerated(); renderGenerated(); };
+        const btnUsed = document.createElement('button'); btnUsed.textContent = g.used ? '✔️USED' : 'TANDA DIGUNAKAN'; btnUsed.className='gen-actions used-btn'; btnUsed.onclick = ()=>{ g.used = !g.used; saveGenerated(); renderGenerated(); };
+        tdAction.appendChild(btnCopy); tdAction.appendChild(btnEdit); tdAction.appendChild(btnRegen); tdAction.appendChild(btnUsed);
+        tr.innerHTML = `<td>${g.kode}</td><td>${g.id}</td><td>${g.email}</td><td>${g.pwd}</td>`;
+        tr.appendChild(tdAction);
+        tbody.appendChild(tr);
+      });
+    }
+
+    function saveGenerated(){ localStorage.setItem('spimf_generated', JSON.stringify(generated)); }
+
+    document.getElementById('btnExport').addEventListener('click', ()=>{
+      if(generated.length === 0){ alert('Tiada data untuk dieksport'); return; }
+      const rows = [['KODE USER','ID CARD REGISTRATION','AKUN GMAIL','PASSWORD GMAIL']];
+      generated.forEach(g => rows.push([g.kode,g.id,g.email,g.pwd]));
+      const csv = rows.map(r => r.map(c => `"${(c||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
+      const blob = new Blob([csv], {type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'generated_members.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+
+    // load previously generated
+    renderGenerated();
+
+    // small UX: allow Enter to submit login or search
+    document.getElementById('loginInput').addEventListener('keydown', (e)=>{ if(e.key === 'Enter') document.getElementById('btnLogin').click(); });
+    document.getElementById('searchInput').addEventListener('keydown', (e)=>{ if(e.key === 'Enter') document.getElementById('btnSearch').click(); });
+
+    // Auto attempt to load CSV when page served over https (GitHub Pages)
+    if(location.protocol === 'https:'){
+      // attempt load but don't block UI
+      loadCSV();
+    }
+
+    // expose some internals for debugging in console
+    window._SPIMF = { loadCSV, csvHeaders, csvRows, generated };
+  </script>
+</body>
+</html>
